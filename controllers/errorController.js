@@ -65,7 +65,7 @@ module.exports = (err, req, res, next) => {
     if (error.name === 'ValidationError')
       error = handleValidationErrorDB(error);
 
-    sendErrorProd(error, res);
+    return sendErrorProd(error, res);
   }
   next(err.message)
 };

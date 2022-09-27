@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
+
+
+
 // name, email, password, photo, passwordConfirm
 
 
@@ -11,7 +14,7 @@ const userSchema = new mongoose.Schema({
         required : [true, 'Please tell us your name.'],
         trim : true,
         maxlength : [40, 'The username must have less or equal then 40 characters.'],
-        minlength : [3, 'The username must have less or equal then 10 characters.'],
+        minlength : [3, 'The username must have less or equal then 3 characters.'],
     },
 
     email : {
@@ -29,6 +32,7 @@ const userSchema = new mongoose.Schema({
         required : [true, 'Please prove a valid password.'],
         minlength : [8, 'The password must have less or equal then 6 characters.'],
         maxlength : [30, 'The password must have less or equal then 30 characters.'],
+        select: false,
     },
     passwordConfirm : {
         type : String,
@@ -54,6 +58,11 @@ userSchema.pre('save', async function(next) {
     this.passwordConfirm = undefined;
     next()
 });
+
+
+userSchema.methods.correctPassword = async function(candidatePassword, userPassword) {
+    return await bcrypt.compare(candidatePassword, userPassword)
+}
 
 
 
