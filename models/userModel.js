@@ -27,6 +27,11 @@ const userSchema = new mongoose.Schema({
     photo : {
         type: String,
     },
+    role : {
+        type: String,
+        enum: ['user', 'guide', 'lead-guide', 'admin'],
+        default : 'user',
+    },
     password : {
         type : String,
         required : [true, 'Please prove a valid password.'],
@@ -44,7 +49,8 @@ const userSchema = new mongoose.Schema({
             },
             message : 'Passwords are not the same.'
         }
-    }
+    },
+    passwordChangedAt : Date,
 })
 
 // database kaydederken password hashleme
@@ -64,7 +70,17 @@ userSchema.methods.correctPassword = async function(candidatePassword, userPassw
     return await bcrypt.compare(candidatePassword, userPassword)
 }
 
+userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
+    if(this.passwordChangedAt) {
+        const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+/*         console.log(changedTimestamp, JWTTimestamp)  */
 
+        return JWTTimestamp < changedTimestamp; // 100 < 200
+    }
+
+    // False means not changes
+    return false;
+}
 
 const User = mongoose.model('User', userSchema);
 module.exports = User
