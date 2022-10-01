@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema({
     password : {
         type : String,
         required : [true, 'Please prove a valid password.'],
-        minlength : [8, 'The password must have less or equal then 6 characters.'],
+        minlength : [4, 'The password must have less or equal then 4 characters.'],
         maxlength : [30, 'The password must have less or equal then 30 characters.'],
         select: false,
     },
@@ -57,13 +57,21 @@ const userSchema = new mongoose.Schema({
 
 // database kaydederken password hashleme
 userSchema.pre('save', async function(next) {
-    if(!this.isModified('password')) return next();
+    if(!this.isModified('password') || this.isNew) return next();
 
     // hash the password cost of 12
     this.password = await bcrypt.hash(this.password, 12);
 
     // delete password field from database
     this.passwordConfirm = undefined;
+    next()
+});
+
+userSchema.pre('save', async function(next) {
+    if(!this.isModified('password') || this.isNew) return next();
+
+    // delete password field from database
+    this.passwordChangedAt = Date.now() - 1000;
     next()
 });
 
@@ -100,4 +108,5 @@ userSchema.methods.createPasswordResetToken = function() {
 }
 
 const User = mongoose.model('User', userSchema);
+
 module.exports = User
