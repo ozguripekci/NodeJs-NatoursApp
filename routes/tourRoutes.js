@@ -23,6 +23,11 @@ router
     .route('/montly-plan/:year')
     .get(tourController.getMonthlyPlan, authController.restrictTo('admin', 'lead-guide'), authController.protect)
 
+//! harita da yerimizi bildirmek ve mesafeyi ayarlamak icin. Bunu kendi app icinde de yapabiliriz.
+router
+    .route('/tours-within/:distance/center/:latlng/unit/:unit')
+    .get(tourController.getToursWithin);
+
 router
     .route('/')
     .get(tourController.getAllTours)
