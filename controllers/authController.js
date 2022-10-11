@@ -86,19 +86,20 @@ exports.logout = (req, res) => {
 
 
 
-let token;
 exports.protect = catchAsync(async(req, res, next) => {
     
+    let token;
     // 1) getting token and check it exist
     if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         token = req.headers.authorization.split(' ')[1];
-    } else if(req.cookies.jwt){
+    } else if(req.cookies.jwt && req.cookies.jwt !== 'loggedout'){
         token = req.cookies.jwt;
     }
     /* console.log(token); */
-
+    
     if(!token) {
-        return next(new AppError('You are not logged in. Please loggin to get access.', 401))
+        res.redirect('/')
+        return next(new AppError('You are not logged in. Please login to get access.', 401))
     }
 
     // 2) verification token
@@ -118,6 +119,7 @@ exports.protect = catchAsync(async(req, res, next) => {
 
     // GRANT ACCESS TO PROTECTED ROUTE
     req.user = currentUser;
+    res.locals.user = currentUser;
     next();
 })
 
