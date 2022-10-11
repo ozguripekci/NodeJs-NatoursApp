@@ -6669,7 +6669,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.displayMap = void 0;
-var displayMap = function displayMap(location) {
+var displayMap = function displayMap(locations) {
   mapboxgl.accessToken = 'pk.eyJ1Ijoib3pndXJpcGVrY2kiLCJhIjoiY2w5MWI5dnkxMTJ0bjNvbXQ2Z3loM3NvbCJ9.x90Vlap-mV8PTidtHr2HvQ';
   var map = new mapboxgl.Map({
     container: 'map',
